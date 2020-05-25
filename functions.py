@@ -5,18 +5,18 @@ import networkx as nx
 import random
 
 # globals, per day cases
-birth_rate = 50
+birth_number = 50
 release_number = 50
 death_rate = 0.2  # % of recovered
 
 
 def recalibrate_graph(G, infect_list, recov_list):
-    G_new, new_infect_list, new_recov_list = remove_nodes(G, infect_list, recov_list)
-    G_new = add_nodes(G)
+    G_new, new_infect_list, new_recov_list = remove_nodes(G, infect_list, recov_list, release_number)
+    G_new = add_nodes(G, birth_number)
     return G_new, new_infect_list, new_recov_list
 
 
-def remove_nodes(G, infect_list, recov_list):
+def remove_nodes(G, infect_list, recov_list, release_number):
     deaths = int(len(recov_list) * death_rate)  # deaths
     death_list = random.sample(recov_list, deaths)
     for x in death_list:
@@ -34,8 +34,8 @@ def remove_nodes(G, infect_list, recov_list):
     return G, infect_list, recov_list
 
 
-def add_nodes(G):
-    for i in range(birth_rate):  # assuming we're adding susceptible new nodes
+def add_nodes(G, birth_number):
+    for i in range(birth_number):  # assuming we're adding susceptible new nodes
         G.add_node((list(G.nodes)[-1]) + 1)
     return G
 
