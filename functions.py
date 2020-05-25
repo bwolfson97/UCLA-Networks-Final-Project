@@ -28,7 +28,7 @@ def add_nodes(G, birth_number, p):
         G.add_node((list(G.nodes)[-1]) + 1)
         for x in G.nodes:
             e = (list(G.nodes)[-1], x) # edge to add
-            if (random.random() < p)
+            if (random.random() < p):
                 G.add_edge(e)
     return G
 
