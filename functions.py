@@ -27,9 +27,8 @@ def add_nodes(G, birth_number, p):
     for i in range(birth_number):  # assuming we're adding susceptible new nodes
         G.add_node((list(G.nodes)[-1]) + 1)
         for x in G.nodes:
-            e = (list(G.nodes)[-1], x) # edge to add
-            if (random.random() < p):
-                G.add_edge(e)
+            if (random.random() < p): # add edge with certain probability (G(n,p) model edge generation for new node)
+                G.add_edge(list(G.nodes)[-1], x)
     return G
 
 
