@@ -27,7 +27,7 @@ def end_to_end(birth_number, release_number, release_time, death_rate=0.01, init
         R: # of recovered inmates at each time step
         D: # of dead inmates at each time step
     """
-    # Set initial infected and calculate p
+    # Set initial infected
     if initial_infected is None:
         initial_infected = [0]
 
