@@ -5,7 +5,7 @@ UCLA Networks Final Project is the code for our final project for the UCLA Math 
 # Structure
 **simulation_end_to_end.ipynb**: a jupyter notebook allowing one to set network and simulation parameters and run the simulation end-to-end, producing a final plot of S, I, R, and D(eaths) over time.
 
-**simulation.py**: module containing function to run entire end_to_end pipeline.
+**end_to_end.py**: module containing function to run entire end_to_end pipeline.
 
 **simulation.py**: module containing functions to run simulation loop.
 
