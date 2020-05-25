@@ -2,23 +2,35 @@ import EoN
 import numpy as np
 import matplotlib as plt
 import networkx as nx
+import random
 
 # globals, per day cases
-birth_rate = 50
-release_rate = 50
+birth_number = 50
+release_number = 50
 death_rate = 0.2 # % of recovered
 
 def recalibrate_graph(G,recov_list,infect_list):
-  G_new = add_nodes(remove_nodes(G))
-  return G_new
+  G_new, new_recov_list, new_infect_list  = remove_nodes(G, recov_list, infect_list)
+  G_new = add_nodes(G):
+  return G_new, new_recov_list, new_infect_list
   
-def remove_nodes(G):
-  # take all recovered and delete $death_rate$ fraction of them
-  # take all nodes and delete $release_rate$ many of them
-  return G
+def remove_nodes(G, recov_list, infect_list):
+  deaths = len(recov_list)*death_rate # deaths
+  death_list = random.sample(recov_list, deaths)
+  for x in death_list:
+    G.remove_node(x)
+    recov_list.remove(x)
+    
+  release_list = random.sample(list(G.nodes), release_number)
+  for x in release_list:
+    G.remove_node(x)
+    if x in recov_list:
+      recov_list.remove(x)
+    if x in infect_list 
+      infect_list.remove(x)
+      
+  return G, recov_list, infect_list
 
 def add_nodes(G):
-  for i in range(birth_rate): # assuming we're adding susceptible
-    G.add_node()
-  return G
-
+  for i in range(birth_rate): # assuming we're adding susceptible new nodes
+    G.add_node((list(G.nodes)[-1])+1)
