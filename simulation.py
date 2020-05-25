@@ -1,8 +1,5 @@
-import networkx as nx
 import EoN
-import matplotlib.pyplot as plt
-import numpy as np
-from functions import *
+import random
 
 
 def simulation(G, tau, gamma, initial_infected, max_time, release_time, release_number, birth_number, p):
@@ -50,42 +47,70 @@ def simulation(G, tau, gamma, initial_infected, max_time, release_time, release_
     return data_list
 
 
-def process_data(data_list, death_rate: float):
-    """Processes raw simulation loop data list into plottable times, S, I, and R arrays.
+# Helper Functions
+def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_number, p):
+    """Updates graph by adding new inmates and removing released inmates.
 
     Args:
-        data_list: list of Simulation_Investigation objects as output by simulation
-        death_rate: percent of recovered inmates that actually die
+        G: a Networkx graph
+        infected_list: list of infected nodes
+        recovered_list: list of recovered nodes
+        birth_number: # of inmates added at each time step
+        release_number: # of inmates to release
+        p: probability of contact between inmate and other inmates
 
     Returns:
-        t: array of times at which events occur
-        S: # of susceptible inmates at each time step
-        I: # of infected inmates at each time step
-        R: # of recovered inmates at each time step
-        D: # of dead inmates at each time step
+        G: Networkx graph with new inmates added and released inmates removed
+        infected_list: infected_list with released inmates removed
+        recovered_list: recovered_list with released inmates removed
     """
-    # Get t, S, I, R data from first time step
-    first_time, first_dict_of_states = data_list[0].summary()
-    times_ll = [first_time]
-    susceptible_ll = [first_dict_of_states['S']]
-    infected_ll = [first_dict_of_states['I']]
-    recovered_ll = [first_dict_of_states['R']]
+    G, infected_list, recovered_list = remove_nodes(G, infected_list, recovered_list, release_number)
+    G = add_nodes(G, birth_number, p)
+    return G, infected_list, recovered_list
 
-    # For next time steps, get data, but delete first element of each time step to fix "recovered bug"
-    for data in data_list[1:]:
-        times, dict_of_states = data.summary()
 
-        # Append each time's data to appropriate list
-        times_ll.append(np.delete(times, 0))
-        susceptible_ll.append(np.delete(dict_of_states['S'], 0))  # Deletes first element because of "recovered bug"
-        infected_ll.append(np.delete(dict_of_states['I'], 0))
-        recovered_ll.append(np.delete(dict_of_states['R'], 0))
+def remove_nodes(G, infected_list, recovered_list, release_number):
+    """Randomly removes release_number nodes from G and updated infected and recovered lists."""
+    release_list = random.sample(list(G.nodes), release_number)
+    for x in release_list:
+        G.remove_node(x)
 
-    # Aggregate quantities into single lists
-    t, S, I, R = aggregate_quantity(times_ll), aggregate_quantity(susceptible_ll), \
-                 aggregate_quantity(infected_ll), aggregate_quantity(recovered_ll)
+        # Remove released inmates from infected and recovered lists
+        if x in infected_list:
+            infected_list.remove(x)
+        if x in recovered_list:
+            recovered_list.remove(x)
 
-    # Calculate deaths
-    R, D = calculate_deaths(R, death_rate)
+    return G, infected_list, recovered_list
 
-    return t, S, I, R, D
+
+def add_nodes(G, birth_number, p):
+    """Adds birth_number inmates to G, with probability p of an edge forming between new node and each existing node."""
+    for i in range(birth_number):  # assuming we're adding susceptible new nodes
+        G.add_node((list(G.nodes)[-1]) + 1)  # Make sure node ID doesn't already exist
+
+        # Connect new node to existing nodes
+        for x in G.nodes:
+            if random.random() < p:  # add edge with certain probability (G(n,p) model edge generation for new node)
+                G.add_edge(list(G.nodes)[-1], x)
+    return G
+
+
+def get_infected(data: EoN.Simulation_Investigation, end_time: int):
+    """Returns list of infected nodes."""
+    return get_type_of_nodes(data, end_time, 'I')
+
+
+def get_recovered(data: EoN.Simulation_Investigation, end_time: int):
+    """Returns list of recovered nodes."""
+    return get_type_of_nodes(data, end_time, 'R')
+
+
+def get_type_of_nodes(data: EoN.Simulation_Investigation, end_time: int, state: str):
+    """Returns list of certain type of nodes."""
+    return [node for (node, s) in data.get_statuses(time=end_time).items() if s == state]
+
+
+
+
+
