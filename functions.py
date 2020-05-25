@@ -1,6 +1,6 @@
 import EoN
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import networkx as nx
 
 # globals, per day cases
@@ -21,4 +21,17 @@ def add_nodes(G):
   for i in range(birth_rate): # assuming we're adding susceptible
     G.add_node()
   return G
+
+def get_infected(data: EoN.Simulation_Investigation, end_time: int, state: char) -> List[int]:
+  '''Returns list of infected nodes.'''
+  return get_type_of_nodes(data, end_time, 'I')
+
+def get_recovered(data: EoN.Simulation_Investigation, end_time: int, state: char) -> List[int]:
+  '''Returns list of recovered nodes.'''
+  return get_type_of_nodes(data, end_time, 'R')
+
+def get_type_of_nodes(data: EoN.Simulation_Investigation, end_time: int, state: char) -> List[int]:
+  '''Returns list of certain type of nodes.'''
+  return [node for (node, state) in data.get_statuses(time=end_time).items() if state == state]
+
 
