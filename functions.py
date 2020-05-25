@@ -17,12 +17,6 @@ def recalibrate_graph(G, infect_list, recov_list):
 
 
 def remove_nodes(G, infect_list, recov_list, release_number):
-    deaths = int(len(recov_list) * death_rate)  # deaths
-    death_list = random.sample(recov_list, deaths)
-    for x in death_list:
-        G.remove_node(x)
-        recov_list.remove(x)
-
     release_list = random.sample(list(G.nodes), release_number)
     for x in release_list:
         G.remove_node(x)
