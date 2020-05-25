@@ -33,7 +33,7 @@ def simulation(G, tau, gamma, initial_infected, max_time, release_time, release_
                             tmin=i, tmax=i + 1, return_full_data=True)
         data_list.append(data)
 
-        # Update infected and recovered nodelists
+        # Update infected and recovered node lists
         infected_list, recovered_list = get_infected(data, i + 1), get_recovered(data, i + 1)
 
         # Add and remove nodes
