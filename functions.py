@@ -46,6 +46,14 @@ def get_type_of_nodes(data: EoN.Simulation_Investigation, end_time: int, state: 
     """Returns list of certain type of nodes."""
     return [node for (node, s) in data.get_statuses(time=end_time).items() if s == state]
 
+
 def aggregate_quantity(list_of_lists):
     """Concatenates list of numpy arrays."""
     return np.concatenate(list_of_lists)
+
+
+def calculate_deaths(R, death_rate):
+    """Says percent of recovered individuals at each time step actually die, and updates R."""
+    D = R * death_rate
+    R = R - D
+    return R, D
