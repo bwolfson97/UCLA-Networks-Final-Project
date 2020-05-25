@@ -14,10 +14,10 @@ def simulation(G, tau, gamma, initial_infected, max_time, release_time, release_
         gamma: recovery rate
         initial_infected: list of nodes that are initially infected
         max_time: # of time steps to run simulation
-        release_time: time step at which to release prisoners
-        release_number: # of prisoners to release
-        birth_number: # of prisoners added at each time step
-        p: probability of contact between prisoner and other prisoners
+        release_time: time step at which to release inmates
+        release_number: # of inmates to release
+        birth_number: # of inmates added at each time step
+        p: probability of contact between inmate and other inmates
 
     Returns:
         data_list: list of Simulation_Investigation objects from each time step of simulation

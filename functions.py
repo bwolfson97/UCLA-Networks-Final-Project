@@ -5,29 +5,50 @@ import networkx as nx
 import random
 
 
-def recalibrate_graph(G, infect_list, recov_list, birth_number, release_number, p):
-    G_new, new_infect_list, new_recov_list = remove_nodes(G, infect_list, recov_list, release_number)
-    G_new = add_nodes(G, birth_number,p)
-    return G_new, new_infect_list, new_recov_list
+def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_number, p):
+    """Updates graph by adding new inmates and removing released inmates.
+
+    Args:
+        G: a Networkx graph
+        infected_list: list of infected nodes
+        recovered_list: list of recovered nodes
+        birth_number: # of inmates added at each time step
+        release_number: # of inmates to release
+        p: probability of contact between inmate and other inmates
+
+    Returns:
+        G: Networkx graph with new inmates added and released inmates removed
+        infected_list: infected_list with released inmates removed
+        recovered_list: recovered_list with released inmates removed
+    """
+    G, infected_list, recovered_list = remove_nodes(G, infected_list, recovered_list, release_number)
+    G = add_nodes(G, birth_number, p)
+    return G, infected_list, recovered_list
 
 
-def remove_nodes(G, infect_list, recov_list, release_number):
+def remove_nodes(G, infected_list, recovered_list, release_number):
+    """Randomly removes release_number nodes from G and updated infected and recovered lists."""
     release_list = random.sample(list(G.nodes), release_number)
     for x in release_list:
         G.remove_node(x)
-        if x in recov_list:
-            recov_list.remove(x)
-        if x in infect_list:
-            infect_list.remove(x)
 
-    return G, infect_list, recov_list
+        # Remove released inmates from infected and recovered lists
+        if x in infected_list:
+            infected_list.remove(x)
+        if x in recovered_list:
+            recovered_list.remove(x)
+
+    return G, infected_list, recovered_list
 
 
 def add_nodes(G, birth_number, p):
+    """Adds birth_number inmates to G, with probability p of an edge forming between new node and each existing node."""
     for i in range(birth_number):  # assuming we're adding susceptible new nodes
-        G.add_node((list(G.nodes)[-1]) + 1)
+        G.add_node((list(G.nodes)[-1]) + 1)  # Make sure node ID doesn't already exist
+
+        # Connect new node to existing nodes
         for x in G.nodes:
-            if (random.random() < p): # add edge with certain probability (G(n,p) model edge generation for new node)
+            if random.random() < p:  # add edge with certain probability (G(n,p) model edge generation for new node)
                 G.add_edge(list(G.nodes)[-1], x)
     return G
 
