@@ -8,7 +8,7 @@ birth_rate = 50
 release_rate = 50
 death_rate = 0.2 # % of recovered
 
-def recalibrate_graph(G):
+def recalibrate_graph(G,recov_list,infect_list):
   G_new = add_nodes(remove_nodes(G))
   return G_new
   
@@ -18,7 +18,7 @@ def remove_nodes(G):
   return G
 
 def add_nodes(G):
-  for i in range(birth_rate):
+  for i in range(birth_rate): # assuming we're adding susceptible
     G.add_node()
   return G
 
