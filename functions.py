@@ -11,7 +11,7 @@ death_rate = 0.2 # % of recovered
 
 def recalibrate_graph(G,recov_list,infect_list):
   G_new, new_recov_list, new_infect_list  = remove_nodes(G, recov_list, infect_list)
-  G_new = add_nodes(G):
+  G_new = add_nodes(G)
   return G_new, new_recov_list, new_infect_list
   
 def remove_nodes(G, recov_list, infect_list):
