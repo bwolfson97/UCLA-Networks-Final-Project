@@ -12,8 +12,10 @@ def recalibrate_graph(data):
   return newdata
   
 def remove_nodes(data):
-  # take all recovered, and delete $death_rate$ fraction of them
+  # take all recovered and delete $death_rate$ fraction of them
+  # take all nodes and delete $release_rate$ many of them
   return data
 
 def add_nodes(data):
+  # add $birth_rate$ many susceptible nodes
   return data
