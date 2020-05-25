@@ -10,13 +10,13 @@ release_number = 50
 death_rate = 0.2  # % of recovered
 
 
-def recalibrate_graph(G, recov_list, infect_list):
-    G_new, new_recov_list, new_infect_list = remove_nodes(G, recov_list, infect_list)
+def recalibrate_graph(G, infect_list, recov_list):
+    G_new, new_infect_list, new_recov_list = remove_nodes(G, infect_list, recov_list)
     G_new = add_nodes(G)
-    return G_new, new_recov_list, new_infect_list
+    return G_new, new_infect_list, new_recov_list
 
 
-def remove_nodes(G, recov_list, infect_list):
+def remove_nodes(G, infect_list, recov_list):
     deaths = int(len(recov_list) * death_rate)  # deaths
     death_list = random.sample(recov_list, deaths)
     for x in death_list:
@@ -31,12 +31,13 @@ def remove_nodes(G, recov_list, infect_list):
         if x in infect_list:
             infect_list.remove(x)
 
-    return G, recov_list, infect_list
+    return G, infect_list, recov_list
 
 
 def add_nodes(G):
     for i in range(birth_rate):  # assuming we're adding susceptible new nodes
         G.add_node((list(G.nodes)[-1]) + 1)
+    return G
 
 
 def get_infected(data: EoN.Simulation_Investigation, end_time: int):
