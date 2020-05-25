@@ -5,9 +5,9 @@ import networkx as nx
 import random
 
 
-def recalibrate_graph(G, infect_list, recov_list, birth_number, release_number):
+def recalibrate_graph(G, infect_list, recov_list, birth_number, release_number, p):
     G_new, new_infect_list, new_recov_list = remove_nodes(G, infect_list, recov_list, release_number)
-    G_new = add_nodes(G, birth_number)
+    G_new = add_nodes(G, birth_number,p)
     return G_new, new_infect_list, new_recov_list
 
 
@@ -23,9 +23,13 @@ def remove_nodes(G, infect_list, recov_list, release_number):
     return G, infect_list, recov_list
 
 
-def add_nodes(G, birth_number):
+def add_nodes(G, birth_number, p):
     for i in range(birth_number):  # assuming we're adding susceptible new nodes
         G.add_node((list(G.nodes)[-1]) + 1)
+        for x in G.nodes:
+            e=(list(G.nodes)[-1], x) # edge to add
+            if (random.random() < p)
+                G.add_edge(e)
     return G
 
 
