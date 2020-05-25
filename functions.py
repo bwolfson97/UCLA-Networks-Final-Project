@@ -51,4 +51,4 @@ def get_recovered(data: EoN.Simulation_Investigation, end_time: int):
 
 def get_type_of_nodes(data: EoN.Simulation_Investigation, end_time: int, state: str):
     """Returns list of certain type of nodes."""
-    return [node for (node, state) in data.get_statuses(time=end_time).items() if state == state]
+    return [node for (node, s) in data.get_statuses(time=end_time).items() if s == state]
