@@ -1,3 +1,7 @@
+import EoN
+import numpy as np
+import matplotlib as plt
+
 # globals, per day cases
 birth_rate = 50
 release_rate = 50
