@@ -4,13 +4,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import random
 
-# globals, per day cases
-birth_number = 50
-release_number = 50
-death_rate = 0.2  # % of recovered
 
-
-def recalibrate_graph(G, infect_list, recov_list):
+def recalibrate_graph(G, infect_list, recov_list, birth_num, release_number):
     G_new, new_infect_list, new_recov_list = remove_nodes(G, infect_list, recov_list, release_number)
     G_new = add_nodes(G, birth_number)
     return G_new, new_infect_list, new_recov_list
