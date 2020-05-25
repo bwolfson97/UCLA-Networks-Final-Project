@@ -40,15 +40,15 @@ def add_nodes(G):
 
 
 def get_infected(data: EoN.Simulation_Investigation, end_time: int):
-    '''Returns list of infected nodes.'''
+    """Returns list of infected nodes."""
     return get_type_of_nodes(data, end_time, 'I')
 
 
 def get_recovered(data: EoN.Simulation_Investigation, end_time: int):
-    '''Returns list of recovered nodes.'''
+    """Returns list of recovered nodes."""
     return get_type_of_nodes(data, end_time, 'R')
 
 
 def get_type_of_nodes(data: EoN.Simulation_Investigation, end_time: int, state: str):
-    '''Returns list of certain type of nodes.'''
+    """Returns list of certain type of nodes."""
     return [node for (node, state) in data.get_statuses(time=end_time).items() if state == state]
