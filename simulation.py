@@ -41,12 +41,11 @@ def simulation(G, tau, gamma, initial_infected, max_time, release_time, release_
         #         r_n = 0
         #     else:
         #         r_n = release_number
-        if i == release_time - 1:  # Only release inmates 1 time, at release_time
+        if i == release_time - 1:  # Only release inmates once, at release_time
             r_n = release_number
         else:
             r_n = 0
-        G, infected_list, recovered_list = recalibrate_graph(G, infected_list, recovered_list, \
-                                                             birth_number, r_n, p)
+        G, infected_list, recovered_list = recalibrate_graph(G, infected_list, recovered_list, birth_number, r_n, p)
 
     return data_list
 
