@@ -5,7 +5,7 @@ import networkx as nx
 import random
 
 
-def recalibrate_graph(G, infect_list, recov_list, birth_num, release_number):
+def recalibrate_graph(G, infect_list, recov_list, birth_number, release_number):
     G_new, new_infect_list, new_recov_list = remove_nodes(G, infect_list, recov_list, release_number)
     G_new = add_nodes(G, birth_number)
     return G_new, new_infect_list, new_recov_list
