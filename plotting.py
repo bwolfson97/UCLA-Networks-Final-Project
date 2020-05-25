@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 
 def plot(t, S, I, R, D):
-    """Creates plot showing S, I, R, D against time.
+    """Creates plot showing S, I, R, D(eaths) against time.
 
     Args:
         t: array of times at which events occur
