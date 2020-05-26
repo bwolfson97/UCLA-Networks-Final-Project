@@ -2,14 +2,14 @@ import EoN
 import random
 
 
-def simulation(G, tau, gamma, initial_infected, max_time, release_time, release_number, birth_number, p):
+def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number, p):
     """Runs a simulation on SIR model.
 
     Args:
         G: Networkx graph
         tau: transmission rate
         gamma: recovery rate
-        initial_infected: list of nodes that are initially infected
+        rho: percent of inmates that are initially infected
         max_time: # of time steps to run simulation
         release_time: time step at which to release inmates
         release_number: # of inmates to release
@@ -19,15 +19,16 @@ def simulation(G, tau, gamma, initial_infected, max_time, release_time, release_
     Returns:
         data_list: list of Simulation_Investigation objects from each time step of simulation
     """
-    infected_list = initial_infected
-    recovered_list = []
     data_list = []
 
     # Loop over time
     for i in range(max_time):
-        # Run simulation
-        data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list, \
-                            tmin=i, tmax=i + 1, return_full_data=True)
+        # Use rho for first time step of simulation
+        if i == 0:
+            data = EoN.fast_SIR(G, tau, gamma, rho=rho, tmax=1, return_full_data=True)
+        else:
+            data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list, \
+                                tmin=i, tmax=i + 1, return_full_data=True)
         data_list.append(data)
 
         # Update infected and recovered node lists
