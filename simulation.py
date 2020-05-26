@@ -23,7 +23,7 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
 
     # Loop over time
     for i in range(max_time):
-        # If rho for first time step of simulation, then use infected_list
+        # Use rho for first time step of simulation
         if i == 0:
             data = EoN.fast_SIR(G, tau, gamma, rho=rho, tmax=1, return_full_data=True)
         else:
