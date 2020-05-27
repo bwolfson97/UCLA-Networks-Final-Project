@@ -15,13 +15,11 @@ to create the environemnt.
 ## File Overview
 `simulation_end_to_end.ipynb`: a jupyter notebook allowing one to set network and simulation parameters and run the simulation end-to-end, producing a final plot of S, I, R, and D(eaths) over time.
 
-`end_to_end.py`: module containing function to run entire end_to_end pipeline.
+`end_to_end.py`: module containing function to run entire end_to_end pipeline, i.e. run simulation **and** analyze results.
 
 `simulation.py`: module containing functions to run simulation loop.
 
-`data_processing.py`: module containing functions to process data from simulation loop to form ready for plotting.
-
-`plotting.py`: module containing functions to plot processed data.
+`analysis.py`: module containing functions to analyze and plot simulation data.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
