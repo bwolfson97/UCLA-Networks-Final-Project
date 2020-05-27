@@ -210,15 +210,16 @@ def calculate_deaths(t, recovered_inmates_and_dead_inmates, delta_recovered_list
     # recovered_inmates_and_dead_inmates includes two groups:
     #   1) Inmates that we know are recovered
     #   2) Inmates that may be recovered or dead
-    recovered_or_dead_inmates = recovered_inmates_and_dead_inmates
 
+    recovered_or_dead_inmates = recovered_inmates_and_dead_inmates.copy()
     # All added/released "recovered" inmates are not dead
     for i in range(1, len(delta_recovered_list)):
         time_idx = np.where(t == i)[0][0]  # finds index of time i
-        recovered_or_dead_inmates[time_idx:] -= delta_recovered_list[i]  # Adjusts for added/released recovered inmates
+        recovered_or_dead_inmates[time_idx:] -= delta_recovered_list[
+            i - 1]  # Adjusts for added/released recovered inmates
 
-        # TODO: I think maybe we should only adjust for added or released inmates and not both??
-
+    # print('recovered_inmates_and_dead_inmates: ', recovered_inmates_and_dead_inmates)
+    # print('recovered_or_dead_inmates: ', recovered_or_dead_inmates)
     # Now we have the inmates that may be recovered or dead
     # Calculate the amount of these inmates that are dead
     D = np.ceil(recovered_or_dead_inmates * death_rate)
