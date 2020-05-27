@@ -1,10 +1,11 @@
 import networkx as nx
-from simulation import simulation
+
 from analysis import plot
+from simulation import simulation
 
 
 def end_to_end(birth_number, release_number, release_time, death_rate=0.01, rho=None,
-               tau=0.05, gamma=1.0, max_time=10, N=5000, p=0.02):
+               tau=0.05, gamma=1.0, max_time=10, N=5000, p=0.02, percent_infected=0.05, percent_recovered=0.05):
     """Runs end-to-end simulation and plots results.
 
     Args:
@@ -18,6 +19,8 @@ def end_to_end(birth_number, release_number, release_time, death_rate=0.01, rho=
         max_time: # of time steps to run simulation
         N: # of inmates initially
         p: probability of contact between inmate and other inmates
+        percent_infected: percent of general population that is infected
+        percent_recovered: percent of general population that is recovered
 
     Returns:
         t: array of times at which events occur
@@ -30,7 +33,8 @@ def end_to_end(birth_number, release_number, release_time, death_rate=0.01, rho=
     G = nx.fast_gnp_random_graph(N, p)
 
     # Run simulation
-    t, S, I, R, D = simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number, p, death_rate)
+    t, S, I, R, D = simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number, p, death_rate,
+                               percent_infected, percent_recovered)
 
     # Plot and analyze results
     plot(t, S, I, R, D)

@@ -1,10 +1,9 @@
-import random
-
 import EoN
 import numpy as np
 
 
-def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number, p, death_rate):
+def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number,
+               p, death_rate, percent_infected, percent_recovered):
     """Runs a simulation on SIR model.
 
     Args:
@@ -18,6 +17,8 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
         birth_number: # of inmates added at each time step
         p: probability of contact between inmate and other inmates
         death_rate: percent of recovered inmates that die
+        percent_infected: percent of general population that is infected
+        percent_recovered: percent of general population that is recovered
 
     Returns:
         t: array of times at which events occur
@@ -52,7 +53,8 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
             r_n = birth_number + release_number
         else:  # Release the same amount of inmates coming in to prison
             r_n = birth_number
-        G, infected_list, recovered_list = recalibrate_graph(G, infected_list, recovered_list, birth_number, r_n, p)
+        G, infected_list, recovered_list = recalibrate_graph(G, infected_list, recovered_list, birth_number, r_n, p,
+                                                             percent_infected, percent_recovered)
 
     # Process raw data into t, S, I, R, D arrays
     t, S, I, R, D = process_data(data_list, death_rate)
@@ -61,7 +63,8 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
 
 
 # Helper Functions
-def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_number, p):
+def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_number, p,
+                      percent_infected, percent_recovered):
     """Updates graph by adding new inmates and removing released inmates.
 
     Args:
@@ -71,6 +74,8 @@ def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_nu
         birth_number: # of inmates added at each time step
         release_number: # of inmates to release
         p: probability of contact between inmate and other inmates
+        percent_infected: percent of general population that is infected
+        percent_recovered: percent of general population that is recovered
 
     Returns:
         G: Networkx graph with new inmates added and released inmates removed
@@ -78,7 +83,7 @@ def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_nu
         recovered_list: recovered_list with released inmates removed
     """
     G, infected_list, recovered_list = remove_nodes(G, infected_list, recovered_list, release_number)
-    G = add_nodes(G, birth_number, p)
+    G = add_nodes(G, infected_list, recovered_list, birth_number, p, percent_infected, percent_recovered)
     return G, infected_list, recovered_list
 
 
@@ -125,7 +130,7 @@ def process_data(data_list, death_rate: float):
 
 def remove_nodes(G, infected_list, recovered_list, release_number):
     """Randomly removes release_number nodes from G and updated infected and recovered lists."""
-    release_list = random.sample(list(G.nodes), release_number)
+    release_list = np.random.choice(list(G.nodes), release_number, replace=False)
     for x in release_list:
         G.remove_node(x)
 
@@ -138,15 +143,27 @@ def remove_nodes(G, infected_list, recovered_list, release_number):
     return G, infected_list, recovered_list
 
 
-def add_nodes(G, birth_number, p):
+def add_nodes(G, infected_list, recovered_list, birth_number, p, percent_infected, percent_recovered):
     """Adds birth_number inmates to G, with probability p of an edge forming between new node and each existing node."""
-    for i in range(birth_number):  # assuming we're adding susceptible new nodes
-        G.add_node((list(G.nodes)[-1]) + 1)  # Make sure node ID doesn't already exist
+    for i in range(birth_number):
+        inmate_id = list(G.nodes)[-1] + 1
+        G.add_node(inmate_id)  # Make sure node ID doesn't already exist
 
-        # Connect new node to existing nodes
-        for x in G.nodes:
-            if random.random() < p:  # add edge with certain probability (G(n,p) model edge generation for new node)
-                G.add_edge(list(G.nodes)[-1], x)
+        # Set state of new inmate
+        percent_susceptible = 1 - percent_infected - percent_recovered
+        state = np.random.choice(['S', 'I', 'R'], p=[percent_susceptible, percent_infected, percent_recovered])
+        if state == 'I':
+            infected_list.append(inmate_id)
+        elif state == 'R':
+            recovered_list.append(inmate_id)
+
+        # Connect inmate to existing inmates
+        for other_inmate_id in G.nodes:
+            # Do not allow self-edges
+            if inmate_id == other_inmate_id:
+                continue
+            if np.random.rand() < p:  # add edge with certain probability (G(n,p) model edge generation for new node)
+                G.add_edge(inmate_id, other_inmate_id)
     return G
 
 
