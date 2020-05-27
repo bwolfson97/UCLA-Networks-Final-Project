@@ -1,5 +1,6 @@
-import EoN
 import random
+
+import EoN
 import numpy as np
 
 
@@ -26,6 +27,8 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
         D: # of dead inmates at each time step
     """
     data_list = []
+    infected_list = []
+    recovered_list = []
 
     # Loop over time
     for i in range(max_time):
@@ -33,7 +36,7 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
         if i == 0:
             data = EoN.fast_SIR(G, tau, gamma, rho=rho, tmax=1, return_full_data=True)
         else:
-            data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list, \
+            data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list,
                                 tmin=i, tmax=i + 1, return_full_data=True)
         data_list.append(data)
 
@@ -46,9 +49,9 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
         #     else:
         #         r_n = release_number
         if i == release_time - 1:  # Only release inmates once, at release_time
-            r_n = release_number
-        else:
-            r_n = 0
+            r_n = birth_number + release_number
+        else:  # Release the same amount of inmates coming in to prison
+            r_n = birth_number
         G, infected_list, recovered_list = recalibrate_graph(G, infected_list, recovered_list, birth_number, r_n, p)
 
     # Process raw data into t, S, I, R, D arrays
