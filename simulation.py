@@ -193,14 +193,16 @@ def add_nodes(G, infected_list, recovered_list, birth_number, p, percent_infecte
 
 def calculate_deaths(t, R, delta_recovered_list, death_rate):
     """Says percent of recovered individuals at each time step actually die, and updates R."""
-    # TODO: Make sure number of recovered is an integer
-
+    # Calculate deaths, ignoring effect of inmate add/release
     D = R * death_rate
 
-    # Fix deaths at inmate add/release times
+    # Correct deaths because of inmate add/release
     for i in range(1, len(delta_recovered_list)):
         time_idx = np.where(t == i)[0][0]  # finds index of time i
         D[time_idx:] -= delta_recovered_list[i] * death_rate
+
+    # Round deaths up to obtain integer amount
+    D = np.ceil(D)
 
     # Adjust R to not include deaths TODO: Not sure if I'm doing this correctly
     R = R - D
