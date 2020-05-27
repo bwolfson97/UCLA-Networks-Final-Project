@@ -1,8 +1,9 @@
 import EoN
 import random
+import numpy as np
 
 
-def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number, p):
+def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number, p, death_rate):
     """Runs a simulation on SIR model.
 
     Args:
@@ -15,9 +16,14 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
         release_number: # of inmates to release
         birth_number: # of inmates added at each time step
         p: probability of contact between inmate and other inmates
+        death_rate: percent of recovered inmates that die
 
     Returns:
-        data_list: list of Simulation_Investigation objects from each time step of simulation
+        t: array of times at which events occur
+        S: # of susceptible inmates at each time step
+        I: # of infected inmates at each time step
+        R: # of recovered inmates at each time step
+        D: # of dead inmates at each time step
     """
     data_list = []
 
@@ -45,7 +51,10 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
             r_n = 0
         G, infected_list, recovered_list = recalibrate_graph(G, infected_list, recovered_list, birth_number, r_n, p)
 
-    return data_list
+    # Process raw data into t, S, I, R, D arrays
+    t, S, I, R, D = process_data(data_list, death_rate)
+
+    return t, S, I, R, D
 
 
 # Helper Functions
@@ -68,6 +77,47 @@ def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_nu
     G, infected_list, recovered_list = remove_nodes(G, infected_list, recovered_list, release_number)
     G = add_nodes(G, birth_number, p)
     return G, infected_list, recovered_list
+
+
+def process_data(data_list, death_rate: float):
+    """Processes raw simulation loop data list into plottable times, S, I, and R arrays.
+
+    Args:
+        data_list: list of Simulation_Investigation objects as output by simulation
+        death_rate: percent of recovered inmates that die
+
+    Returns:
+        t: array of times at which events occur
+        S: # of susceptible inmates at each time step
+        I: # of infected inmates at each time step
+        R: # of recovered inmates at each time step
+        D: # of dead inmates at each time step
+    """
+    # Get t, S, I, R data from first time step
+    first_time, first_dict_of_states = data_list[0].summary()
+    times_ll = [first_time]
+    susceptible_ll = [first_dict_of_states['S']]
+    infected_ll = [first_dict_of_states['I']]
+    recovered_ll = [first_dict_of_states['R']]
+
+    # For next time steps, get data, but delete first element of each time step to fix "recovered bug"
+    for data in data_list[1:]:
+        times, dict_of_states = data.summary()
+
+        # Append each time's data to appropriate list
+        times_ll.append(np.delete(times, 0))
+        susceptible_ll.append(np.delete(dict_of_states['S'], 0))  # Deletes first element because of "recovered bug"
+        infected_ll.append(np.delete(dict_of_states['I'], 0))
+        recovered_ll.append(np.delete(dict_of_states['R'], 0))
+
+    # Aggregate quantities into single lists
+    t, S, I, R = np.concatenate(times_ll), np.concatenate(susceptible_ll), \
+                 np.concatenate(infected_ll), np.concatenate(recovered_ll)
+
+    # Calculate deaths
+    R, D = calculate_deaths(R, death_rate)
+
+    return t, S, I, R, D
 
 
 def remove_nodes(G, infected_list, recovered_list, release_number):
@@ -97,6 +147,13 @@ def add_nodes(G, birth_number, p):
     return G
 
 
+def calculate_deaths(R, death_rate):
+    """Says percent of recovered individuals at each time step actually die, and updates R."""
+    D = R * death_rate
+    R = R - D
+    return R, D
+
+
 def get_infected(data: EoN.Simulation_Investigation, end_time: int):
     """Returns list of infected nodes."""
     return get_type_of_nodes(data, end_time, 'I')
@@ -110,8 +167,3 @@ def get_recovered(data: EoN.Simulation_Investigation, end_time: int):
 def get_type_of_nodes(data: EoN.Simulation_Investigation, end_time: int, state: str):
     """Returns list of certain type of nodes."""
     return [node for (node, s) in data.get_statuses(time=end_time).items() if s == state]
-
-
-
-
-

@@ -1,7 +1,6 @@
 import networkx as nx
-from data_processing import process_data
 from simulation import simulation
-from plotting import plot
+from analysis import plot
 
 
 def end_to_end(birth_number, release_number, release_time, death_rate=0.01, rho=None,
@@ -27,9 +26,12 @@ def end_to_end(birth_number, release_number, release_time, death_rate=0.01, rho=
         R: # of recovered inmates at each time step
         D: # of dead inmates at each time step
     """
-    # Build graph, run simulation, process data, and plot results
+    # Build graph
     G = nx.fast_gnp_random_graph(N, p)
-    data_list = simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number, p)
-    t, S, I, R, D = process_data(data_list, death_rate=death_rate)
+
+    # Run simulation
+    t, S, I, R, D = simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number, p, death_rate)
+
+    # Plot and analyze results
     plot(t, S, I, R, D)
     return t, S, I, R, D
