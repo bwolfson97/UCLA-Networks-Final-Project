@@ -2,7 +2,7 @@ import EoN
 import numpy as np
 
 
-def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth_number,
+def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, birth_number,
                p, death_rate, percent_infected, percent_recovered):
     """Runs a simulation on SIR model.
 
@@ -12,7 +12,7 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
         gamma: recovery rate
         rho: percent of inmates that are initially infected
         max_time: # of time steps to run simulation
-        release_time: time step at which to release inmates
+        number_infected_before_release: number of infected at which to perform release on next integer time
         release_number: # of inmates to release
         birth_number: # of inmates added at each time step
         p: probability of contact between inmate and other inmates
@@ -27,6 +27,7 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
         R: # of recovered inmates at each time step
         D: # of dead inmates at each time step
     """
+    release_occurred = False
     data_list = []
     infected_list = []
     recovered_list = []
@@ -34,7 +35,7 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
 
     # Loop over time
     for i in range(max_time):
-        # Use rho for first time step of simulation
+        # Use rho for first time step
         if i == 0:
             data = EoN.fast_SIR(G, tau, gamma, rho=rho, tmax=1, return_full_data=True)
         else:
@@ -42,18 +43,17 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
                                 tmin=i, tmax=i + 1, return_full_data=True)
         data_list.append(data)
 
-        # Update infected and recovered node lists
+        # Update infected and recovered inmate lists
         infected_list, recovered_list = get_infected(data, i + 1), get_recovered(data, i + 1)
 
-        # Add and remove nodes
-        #     if len(infected_list) < number_of_infected_before_releases: # Only start inmate releases after some time
-        #         r_n = 0
-        #     else:
-        #         r_n = release_number
-        if i == release_time - 1:  # Only release inmates once, at release_time
+        # Check if release condition has been met
+        if not release_occurred and len(infected_list) >= number_infected_before_release:
             r_n = birth_number + release_number
-        else:  # Release the same amount of inmates coming in to prison
+            release_occurred = True
+        else:  # If not, use background release rate
             r_n = birth_number
+
+        # Add and release inmates
         G, infected_list, recovered_list, delta_recovered = recalibrate_graph(G, infected_list, recovered_list,
                                                                               birth_number, r_n, p, percent_infected,
                                                                               percent_recovered, death_rate)
@@ -81,6 +81,7 @@ def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_nu
         p: probability of contact between inmate and other inmates
         percent_infected: percent of general population that is infected
         percent_recovered: percent of general population that is recovered
+        death_rate: percent of recovered inmates that die
 
     Returns:
         G: Networkx graph with new inmates added and released inmates removed
