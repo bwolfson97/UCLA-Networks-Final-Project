@@ -4,16 +4,16 @@ from analysis import plot
 from simulation import simulation
 
 
-def end_to_end(birth_number, release_number, release_time, death_rate=0.01, rho=None,
-               tau=0.05, gamma=1.0, max_time=10, N=5000, p=0.02, percent_infected=0.05, percent_recovered=0.05):
+def end_to_end(birth_number, release_number, release_time, rho=0.0003, death_rate=0.012,
+               tau=0.03, gamma=1.0, max_time=10, N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015):
     """Runs end-to-end simulation and plots results.
 
     Args:
         birth_number: # of inmates added at each time step
         release_number: # of inmates to release
         release_time: time step at which to release inmates
-        death_rate:
         rho: percent of inmates that are initially infected
+        death_rate: probability of dying after being infected
         tau: transmission rate
         gamma: recovery rate
         max_time: # of time steps to run simulation
