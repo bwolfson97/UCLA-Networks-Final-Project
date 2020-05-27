@@ -56,7 +56,7 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
             r_n = birth_number
         G, infected_list, recovered_list, delta_recovered = recalibrate_graph(G, infected_list, recovered_list,
                                                                               birth_number, r_n, p, percent_infected,
-                                                                              percent_recovered)
+                                                                              percent_recovered, death_rate)
 
         # Track the number of recovered inmates added or released at each time step
         delta_recovered_list.append(delta_recovered)
@@ -69,7 +69,7 @@ def simulation(G, tau, gamma, rho, max_time, release_time, release_number, birth
 
 # Helper Functions
 def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_number, p,
-                      percent_infected, percent_recovered):
+                      percent_infected, percent_recovered, death_rate):
     """Updates graph by adding new inmates and removing released inmates.
 
     Args:
@@ -89,7 +89,7 @@ def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_nu
     """
     # Release inmates
     G, infected_list, recovered_list, num_recovered_released = remove_nodes(G, infected_list, recovered_list,
-                                                                            release_number)
+                                                                            release_number, death_rate)
 
     # Add new inmates
     G, num_recovered_added = add_nodes(G, infected_list, recovered_list, birth_number, p, percent_infected,
@@ -144,56 +144,33 @@ def process_data(data_list, delta_recovered_list, death_rate: float):
 
 
 def remove_nodes(G, infected_list, recovered_list, release_number, death_rate):
-    """Randomly removes release_number nodes from G and updated infected and recovered lists."""
+    """Removes release_number inmates from G, selecting inmates of state proportional to the percentage of their
+    state in the prison."""
     num_recovered_released = 0
-    release_list = []
 
-    G_susceptible = G
-    for x in infected_list:
-        G_susceptible.remove_node(x)
-    for x in recovered_list:
-        G_susceptible.remove_node(x)
-    susceptible_list = list(G_susceptible.nodes)
-    
-    s = len(susceptible_list)
-    i = len(infected_list)
-    r = np.floor(len(recovered_list) * (1 - death_rate))
-    
-    dm = s+i+r
-    ps = s / dm
-    pi = i / dm
-    pr = 1 - ps - pi
+    # Get list of susceptible inmates
+    susceptible_list = list(np.setdiff1d(G.nodes, np.union1d(infected_list, recovered_list)))
 
     for i in range(release_number):
+        # Calculate proportion of inmates that are susceptible, infected, or recovered (not dead)
+        num_of_recovered_not_dead = np.floor(len(recovered_list) * (1 - death_rate))
+        dm = len(susceptible_list) + len(infected_list) + num_of_recovered_not_dead
+
+        # Proportion of state = # of inmates of state / # of alive inmates
+        ps = len(susceptible_list) / dm
+        pi = len(infected_list) / dm
+        pr = num_of_recovered_not_dead / dm
+
+        # Select state of inmate to remove according to their percentage of prison population
         state = np.random.choice(['S', 'I', 'R'], p=[ps, pi, pr])
         if state == 'S':
-            x = np.random.choice(susceptible_list)
-            susceptible_list.remove(x)
-            s -= 1
-        if state == 'I':
-            x = np.random.choice(infected_list)
-            infected_list.remove(x)
-            i -= 1
+            removed_inmate = susceptible_list.pop()  # We assume lists of inmates are ordered randomly
+        elif state == 'I':
+            removed_inmate = infected_list.pop()
         else:
-            x = np.random.choice(recovered_list)
-            recovered_list.remove(x)
-            r -= 1
-        dm -= 1
-        release_list.append(x)
-        ps = s / dm
-        pi = i / dm
-        pr = 1 - ps - pi
-
-    # Release release_number randomly selected inmates
-    for x in release_list:
-        G.remove_node(x)
-
-        # Remove released inmates from infected and recovered lists
-        if x in infected_list:
-            infected_list.remove(x)
-        if x in recovered_list:
-            recovered_list.remove(x)
+            removed_inmate = recovered_list.pop()
             num_recovered_released += 1
+        G.remove_node(removed_inmate)
 
     return G, infected_list, recovered_list, num_recovered_released
 
