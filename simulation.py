@@ -204,21 +204,26 @@ def add_nodes(G, infected_list, recovered_list, birth_number, p, percent_infecte
     return G, num_recovered_added
 
 
-def calculate_deaths(t, R, delta_recovered_list, death_rate):
+def calculate_deaths(t, recovered_inmates_and_dead_inmates, delta_recovered_list, death_rate):
     """Says percent of recovered individuals at each time step actually die, and updates R."""
-    # Calculate deaths, ignoring effect of inmate add/release
-    D = R * death_rate
+    # recovered_inmates_and_dead_inmates includes two groups:
+    #   1) Inmates that we know are recovered
+    #   2) Inmates that may be recovered or dead
+    recovered_or_dead_inmates = recovered_inmates_and_dead_inmates
 
-    # Correct deaths because of inmate add/release
+    # All added/released "recovered" inmates are not dead
     for i in range(1, len(delta_recovered_list)):
         time_idx = np.where(t == i)[0][0]  # finds index of time i
-        D[time_idx:] -= delta_recovered_list[i] * death_rate
+        recovered_or_dead_inmates[time_idx:] -= delta_recovered_list[i]  # Adjusts for added/released recovered inmates
 
-    # Round deaths up to obtain integer amount
-    D = np.ceil(D)
+        # TODO: I think maybe we should only adjust for added or released inmates and not both??
 
-    # Adjust R to not include deaths TODO: Not sure if I'm doing this correctly
-    R = R - D
+    # Now we have the inmates that may be recovered or dead
+    # Calculate the amount of these inmates that are dead
+    D = np.ceil(recovered_or_dead_inmates * death_rate)
+
+    # Subtract all the dead inmates from the original R
+    R = recovered_inmates_and_dead_inmates - D
 
     return R, D
 
