@@ -154,10 +154,14 @@ def remove_nodes(G, infected_list, recovered_list, release_number, death_rate):
     for x in recovered_list:
         G_susceptible.remove_node(x)
     susceptible_list = list(G_susceptible.nodes)
-
-    denominator = len(susceptible_list) + len(infected_list) + np.floor(len(recovered_list) * (1 - death_rate))
-    ps = len(susceptible_list) / denominator
-    pi = len(infected_list) / denominator
+    
+    s = len(susceptible_list)
+    i = len(infected_list)
+    r = np.floor(len(recovered_list) * (1 - death_rate))
+    
+    dm = s+i+r
+    ps = s / dm
+    pi = i / dm
     pr = 1 - ps - pi
 
     for i in range(release_number):
@@ -165,17 +169,20 @@ def remove_nodes(G, infected_list, recovered_list, release_number, death_rate):
         if state == 'S':
             x = np.random.choice(susceptible_list)
             susceptible_list.remove(x)
-            # ps -= 1 / denominator
+            s -= 1
         if state == 'I':
             x = np.random.choice(infected_list)
             infected_list.remove(x)
-            # pi -= 1 / denominator
+            i -= 1
         else:
             x = np.random.choice(recovered_list)
             recovered_list.remove(x)
-            # pr -= 1 / denominator
-        denominator -= 1
+            r -= 1
+        dm -= 1
         release_list.append(x)
+        ps = s / dm
+        pi = i / dm
+        pr = 1 - ps - pi
 
     # Release release_number randomly selected inmates
     for x in release_list:
