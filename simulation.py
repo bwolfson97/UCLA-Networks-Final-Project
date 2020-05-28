@@ -2,8 +2,8 @@ import EoN
 import numpy as np
 
 
-def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, birth_number,
-               p, death_rate, percent_infected, percent_recovered):
+def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, background_inmate_turnover,
+               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered):
     """Runs a simulation on SIR model.
 
     Args:
@@ -13,8 +13,9 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         rho: percent of inmates that are initially infected
         max_time: # of time steps to run simulation
         number_infected_before_release: number of infected at which to perform release on next integer time
-        release_number: # of inmates to release
-        birth_number: # of inmates added at each time step
+        release_number: # of inmates to release at release intervention
+        background_inmate_turnover: background # of inmates added/released at each time step
+        stop_inflow_at_intervention: should we stop the background inflow of inmates at intervention time?
         p: probability of contact between inmate and other inmates
         death_rate: percent of recovered inmates that die
         percent_infected: percent of general population that is infected
@@ -28,6 +29,7 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         D: # of dead inmates at each time step
     """
     release_occurred = False
+    background_release_number = background_inmate_turnover
     data_list = []
     infected_list = []
     recovered_list = []
@@ -48,15 +50,20 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
 
         # Check if release condition has been met
         if not release_occurred and len(infected_list) >= number_infected_before_release:
-            r_n = birth_number + release_number
+            r_n = background_release_number + release_number
             release_occurred = True
+
+            # If we are stopping background inmate turnover at release intervention time
+            if stop_inflow_at_intervention:
+                background_inmate_turnover = 0
         else:  # If not, use background release rate
-            r_n = birth_number
+            r_n = background_release_number
 
         # Add and release inmates
         G, infected_list, recovered_list, delta_recovered = recalibrate_graph(G, infected_list, recovered_list,
-                                                                              birth_number, r_n, p, percent_infected,
-                                                                              percent_recovered, death_rate)
+                                                                              background_inmate_turnover, r_n, p,
+                                                                              percent_infected, percent_recovered,
+                                                                              death_rate)
 
         # Track the number of recovered inmates added or released at each time step
         delta_recovered_list.append(delta_recovered)
@@ -157,6 +164,7 @@ def remove_nodes(G, infected_list, recovered_list, release_number, death_rate):
         num_of_recovered_not_dead = np.floor(len(recovered_list) * (1 - death_rate))
         dm = len(susceptible_list) + len(infected_list) + num_of_recovered_not_dead
 
+        # print('dm: ', dm)
         # Proportion of state = # of inmates of state / # of alive inmates
         ps = len(susceptible_list) / dm
         pi = len(infected_list) / dm

@@ -4,13 +4,13 @@ from analysis import summary
 from simulation import simulation
 
 
-def end_to_end(birth_number, release_number, number_infected_before_release, rho=0.0003, death_rate=0.012,
+def end_to_end(background_inmate_turnover, release_number, number_infected_before_release, rho=0.0003, death_rate=0.012,
                tau=0.03, gamma=1.0, max_time=10, N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015,
-               save_plot=False):
+               save_plot=False, stop_inflow_at_intervention=False):
     """Runs end-to-end simulation and plots results.
 
     Args:
-        birth_number: # of inmates added at each time step
+        background_inmate_turnover: background # of inmates added/released at each time step
         release_number: # of inmates to release
         number_infected_before_release: number of infected at which to perform release on next integer time
         rho: percent of inmates that are initially infected
@@ -23,6 +23,7 @@ def end_to_end(birth_number, release_number, number_infected_before_release, rho
         percent_infected: percent of general population that is infected
         percent_recovered: percent of general population that is recovered
         save_plot: should plot of results be saved to computer?
+        stop_inflow_at_intervention: should we stop the background inflow of inmates at intervention time?
 
     Returns:
         t: array of times at which events occur
@@ -39,7 +40,8 @@ def end_to_end(birth_number, release_number, number_infected_before_release, rho
 
     # Run simulation
     t, S, I, R, D = simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number,
-                               birth_number, p, death_rate, percent_infected, percent_recovered)
+                               background_inmate_turnover, stop_inflow_at_intervention, p, death_rate,
+                               percent_infected, percent_recovered)
 
     # Print summary of results
     summary(t, S, I, R, D, save_plot, parameters_dict)
