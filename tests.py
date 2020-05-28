@@ -3,14 +3,12 @@ from end_to_end import end_to_end
 
 def main():
     # Set parameters
-    birth_number = 100
     release_number = 500
     number_infected_before_release = 200
+    stop_inflow_at_intervention = True
 
     print('Running simulation ...')
-    t, S, I, R, D = end_to_end(birth_number, release_number, number_infected_before_release, rho=0.0003,
-                               death_rate=0.012, tau=0.03, gamma=1.0, max_time=10, N=3000, p=0.02,
-                               percent_infected=0.0035, percent_recovered=0.0015)
+    t, S, I, R, D = end_to_end(release_number, number_infected_before_release, stop_inflow_at_intervention)
     print('Simulation complete.')
 
     print('Commencing tests ...')
