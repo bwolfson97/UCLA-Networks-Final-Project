@@ -68,6 +68,16 @@ def parameters_into_string(parameters):
     """Turns parameter dictionary into string for use in naming plot file."""
     parameter_string = str()
     for parameter, value in parameters.items():
+        # Logic to shorten parameter names because ran into too long filename problems
+        if parameter == 'save_plot':  # redundant to include
+            continue
+        if parameter == 'number_infected_before_release':
+            parameter = 'num_inf_bf_release'
+        elif parameter == 'background_inmate_turnover':
+            parameter = 'bck_turnover'
+        elif parameter == 'stop_inflow_at_intervention':
+            parameter = 'stp_in_at_int'
+
         parameter_string += f'_{parameter}-{value}_'
     return parameter_string
 
