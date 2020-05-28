@@ -52,12 +52,13 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         # Check if release condition has been met
         if not release_occurred and len(infected_list) >= number_infected_before_release:
             print(f'Release intervention condition met.\n\tTime: {i + 1}\n\t# of infected: {len(infected_list)}')
+            print(f'\tReleasing {release_number} inmates.')
             r_n = background_release_number + release_number
             release_occurred = True
 
             # If we are stopping background inmate turnover at release intervention time
             if stop_inflow_at_intervention:
-                print('Stopping inmate inflow.')
+                print('\tStopping inmate inflow.')
                 background_inmate_turnover = 0
         else:  # If not, use background release rate
             r_n = background_release_number
