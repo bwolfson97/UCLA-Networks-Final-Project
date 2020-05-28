@@ -21,5 +21,7 @@ to create the environemnt.
 
 `analysis.py`: module containing functions to analyze and plot simulation data.
 
+`tests.py`: script that tests that various aspects of the simulation are working properly.
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
