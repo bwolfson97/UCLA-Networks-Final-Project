@@ -28,6 +28,7 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         R: # of recovered inmates at each time step
         D: # of dead inmates at each time step
     """
+    print('Starting simulation...')
     release_occurred = False
     background_release_number = background_inmate_turnover
     data_list = []
@@ -50,11 +51,13 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
 
         # Check if release condition has been met
         if not release_occurred and len(infected_list) >= number_infected_before_release:
+            print(f'Release intervention condition met\n\tTime: {i + 1}\n\t# of infected: {len(infected_list)}')
             r_n = background_release_number + release_number
             release_occurred = True
 
             # If we are stopping background inmate turnover at release intervention time
             if stop_inflow_at_intervention:
+                print('Stopping inmate inflow')
                 background_inmate_turnover = 0
         else:  # If not, use background release rate
             r_n = background_release_number
@@ -71,6 +74,7 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
     # Process raw data into t, S, I, R, D arrays
     t, S, I, R, D = process_data(data_list, delta_recovered_list, death_rate)
 
+    print('Simulation completed.\n')
     return t, S, I, R, D
 
 
