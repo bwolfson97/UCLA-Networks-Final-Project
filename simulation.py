@@ -168,7 +168,12 @@ def remove_nodes(G, infected_list, recovered_list, release_number, death_rate):
         num_of_recovered_not_dead = np.floor(len(recovered_list) * (1 - death_rate))
         dm = len(susceptible_list) + len(infected_list) + num_of_recovered_not_dead
 
-        # print('dm: ', dm)
+        # Prevent division by 0
+        if dm == 0:
+            raise Exception(
+                'All inmates died or got released from prison :( Try turning down max_time or background '
+                'turnover rate')
+
         # Proportion of state = # of inmates of state / # of alive inmates
         ps = len(susceptible_list) / dm
         pi = len(infected_list) / dm
