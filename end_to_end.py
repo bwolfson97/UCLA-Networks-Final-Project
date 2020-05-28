@@ -5,7 +5,8 @@ from simulation import simulation
 
 
 def end_to_end(birth_number, release_number, number_infected_before_release, rho=0.0003, death_rate=0.012,
-               tau=0.03, gamma=1.0, max_time=10, N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015):
+               tau=0.03, gamma=1.0, max_time=10, N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015,
+               save_plot=False):
     """Runs end-to-end simulation and plots results.
 
     Args:
@@ -21,6 +22,7 @@ def end_to_end(birth_number, release_number, number_infected_before_release, rho
         p: probability of contact between inmate and other inmates
         percent_infected: percent of general population that is infected
         percent_recovered: percent of general population that is recovered
+        save_plot: should plot of results be saved to computer?
 
     Returns:
         t: array of times at which events occur
@@ -29,8 +31,8 @@ def end_to_end(birth_number, release_number, number_infected_before_release, rho
         R: # of recovered inmates at each time step
         D: # of dead inmates at each time step
     """
-    # Print parameters
-    print(locals())
+    # Save parameters
+    parameters_dict = locals()
 
     # Build graph
     G = nx.fast_gnp_random_graph(N, p)
@@ -40,6 +42,6 @@ def end_to_end(birth_number, release_number, number_infected_before_release, rho
                                birth_number, p, death_rate, percent_infected, percent_recovered)
 
     # Print summary of results
-    summary(t, S, I, R, D)
+    summary(t, S, I, R, D, save_plot, parameters_dict)
 
     return t, S, I, R, D

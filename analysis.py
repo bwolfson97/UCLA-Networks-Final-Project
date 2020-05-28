@@ -1,10 +1,16 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def summary(t, S, I, R, D):
+def summary(t, S, I, R, D, save_plot, parameters):
+    """Plots graph of simulation and computes various statistics."""
+    # Print parameters
+    print(parameters)
+
     # Plot graph
-    plot(t, S, I, R, D)
+    plot(t, S, I, R, D, save_plot, parameters)
 
     # Print statistics
     print('Total # of infections: ', count_total_infected(I))
@@ -23,7 +29,7 @@ def count_total_deaths(D):
     return D[-1]
 
 
-def plot(t, S, I, R, D):
+def plot(t, S, I, R, D, save_plot, parameters):
     """Creates plot showing S, I, R, D(eaths) against time.
 
     Args:
@@ -32,7 +38,15 @@ def plot(t, S, I, R, D):
         I: # of infected inmates at each time step
         R: # of recovered inmates at each time step
         D: # of dead inmates at each time step
+        save_plot: should plot be saved to computer?
+        parameters: dict of parameters end_to_end was called with
     """
+    # Set figure size and font size
+    WIDTH = 6
+    HEIGHT = 4
+    FONT_SIZE = 11
+    set_plot_display_settings(WIDTH, HEIGHT, FONT_SIZE)
+
     plt.plot(t, S, label='Susceptible', color='b')
     plt.plot(t, I, label='Infected', color='r')
     plt.plot(t, R, label='Recovered', color='g')
@@ -41,4 +55,23 @@ def plot(t, S, I, R, D):
     plt.xlabel('Time')
     plt.ylabel('Number of inmates')
     plt.legend()
+    if save_plot:
+        # Place plots in folder 'plots'
+        if not os.path.exists('plots'):
+            os.makedirs('plots')
+        plt.savefig(f'plots/simulation_plot{parameters_into_string(parameters)}.png')
     plt.show()
+
+
+# Helper functions
+def parameters_into_string(parameters):
+    """Turns parameter dictionary into string for use in naming plot file."""
+    parameter_string = str()
+    for parameter, value in parameters.items():
+        parameter_string += f'_{parameter}-{value}_'
+    return parameter_string
+
+
+def set_plot_display_settings(plot_width, plot_height, font_size):
+    plt.rcParams.update({"figure.figsize": (plot_width, plot_height)})
+    plt.rcParams.update({'font.size': font_size})
