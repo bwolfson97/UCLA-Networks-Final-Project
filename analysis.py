@@ -7,15 +7,16 @@ import numpy as np
 def summary(t, S, I, R, D, save_plot, title, parameters):
     """Plots graph of simulation and computes various statistics."""
     # Print parameters
-    print('Parameters:')
+    print('########################################## Parameters #####################################################')
     print(parameters)
+
+    # Print statistics
+    print('\n########################################## Results ######################################################')
+    print('Total # of infections: ', count_total_infected(I))
+    print('Total # of deaths: ', count_total_deaths(D))
 
     # Plot graph
     plot(t, S, I, R, D, save_plot, title, parameters)
-
-    # Print statistics
-    print('Total # of infections: ', count_total_infected(I))
-    print('Total # of deaths: ', count_total_deaths(D))
 
 
 def count_total_infected(I):
@@ -58,12 +59,16 @@ def plot(t, S, I, R, D, save_plot, title, parameters):
     plt.ylabel('Number of inmates')
     plt.title(title)
     plt.legend()
+    plt.show()
+
+    # Save plot if wanted
     if save_plot:
         # Place plots in folder 'plots'
         if not os.path.exists('plots'):
             os.makedirs('plots')
-        plt.savefig(f'plots/simulation_plot{parameters_into_string(parameters)}.png')
-    plt.show()
+        filename = f'simulation_plot{parameters_into_string(parameters)}'
+        plt.savefig(f'plots/{filename}.png')
+        print(f'Plot saved with filename: {filename}')
 
 
 # Helper functions
