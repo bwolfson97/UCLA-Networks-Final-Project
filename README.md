@@ -13,7 +13,7 @@ conda env create -f environment.yml
 to create the environemnt.
 
 ## File Overview
-`simulation_end_to_end.ipynb`: a jupyter notebook allowing one to set network and simulation parameters and run the simulation end-to-end, producing a final plot of S, I, R, and D(eaths) over time.
+`experiments.ipynb`: a jupyter notebook running experiments on the effects of inmate release interventions and stopping inmate inflow interventions on the spread of coronavirus in prisons. The output of these experiments may be found in the `experiments.html` and `experiments.pdf` files (both files contain same information).
 
 `end_to_end.py`: module containing function to run entire end_to_end pipeline, i.e. run simulation **and** analyze results.
 
