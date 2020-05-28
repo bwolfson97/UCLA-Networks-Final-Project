@@ -15,6 +15,9 @@ def summary(t, S, I, R, D, save_plot, title, parameters):
     print('Total # of infections: ', count_total_infected(I))
     print('Total # of deaths: ', count_total_deaths(D))
 
+    peak_infection_time, peak_infection_number = find_infections_peak(t, I)
+    print(f'Peak of infections occurred at:\n\tt: {peak_infection_time}\n\t# of infections: {peak_infection_number}')
+
     # Plot graph
     plot(t, S, I, R, D, save_plot, title, parameters)
 
@@ -29,6 +32,12 @@ def count_total_infected(I):
 def count_total_deaths(D):
     """Returns total number of deaths."""
     return D[-1]
+
+
+def find_infections_peak(t, I):
+    """Finds the time and # of infections at the peak of infections."""
+    peak_idx = np.argmax(I)
+    return t[peak_idx], I[peak_idx]
 
 
 def plot(t, S, I, R, D, save_plot, title, parameters):
