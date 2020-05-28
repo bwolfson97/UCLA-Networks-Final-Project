@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def summary(t, S, I, R, D, save_plot, parameters):
+def summary(t, S, I, R, D, save_plot, title, parameters):
     """Plots graph of simulation and computes various statistics."""
     # Print parameters
     print('Parameters:')
     print(parameters)
 
     # Plot graph
-    plot(t, S, I, R, D, save_plot, parameters)
+    plot(t, S, I, R, D, save_plot, title, parameters)
 
     # Print statistics
     print('Total # of infections: ', count_total_infected(I))
@@ -30,7 +30,7 @@ def count_total_deaths(D):
     return D[-1]
 
 
-def plot(t, S, I, R, D, save_plot, parameters):
+def plot(t, S, I, R, D, save_plot, title, parameters):
     """Creates plot showing S, I, R, D(eaths) against time.
 
     Args:
@@ -40,6 +40,7 @@ def plot(t, S, I, R, D, save_plot, parameters):
         R: # of recovered inmates at each time step
         D: # of dead inmates at each time step
         save_plot: should plot be saved to computer?
+        title: title of plot
         parameters: dict of parameters end_to_end was called with
     """
     # Set figure size and font size
@@ -55,6 +56,7 @@ def plot(t, S, I, R, D, save_plot, parameters):
 
     plt.xlabel('Time')
     plt.ylabel('Number of inmates')
+    plt.title(title)
     plt.legend()
     if save_plot:
         # Place plots in folder 'plots'

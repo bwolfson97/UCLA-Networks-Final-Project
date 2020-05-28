@@ -5,8 +5,8 @@ from simulation import simulation
 
 
 def end_to_end(release_number, number_infected_before_release, stop_inflow_at_intervention,
-               background_inmate_turnover=20, rho=0.0003, death_rate=0.012, tau=0.03, gamma=0.07, max_time=10,
-               N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015, save_plot=False):
+               background_inmate_turnover=20, rho=0.0003, death_rate=0.012, tau=0.03, gamma=0.07, max_time=60,
+               N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015, save_plot=False, title=''):
     """Runs end-to-end simulation and plots results.
 
     Args:
@@ -24,6 +24,7 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
         percent_recovered: percent of general population that is recovered
         save_plot: should plot of results be saved to computer?
         stop_inflow_at_intervention: should we stop the background inflow of inmates at intervention time?
+        title: title of plot
 
     Returns:
         t: array of times at which events occur
@@ -44,6 +45,6 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
                                percent_infected, percent_recovered)
 
     # Print summary of results
-    summary(t, S, I, R, D, save_plot, parameters_dict)
+    summary(t, S, I, R, D, save_plot, title, parameters_dict)
 
     return t, S, I, R, D
