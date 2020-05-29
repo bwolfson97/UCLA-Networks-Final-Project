@@ -51,8 +51,7 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
 
         # Check if release condition has been met
         if not release_occurred and len(infected_list) >= number_infected_before_release:
-            print(f'Release intervention condition met.\n\tTime: {i + 1}\n\t# of infected: {len(infected_list)}')
-            print(f'\tReleasing {release_number} inmates.')
+            print_release_intervention_info(i + 1, infected_list, release_number)
             r_n = background_release_number + release_number
             release_occurred = True
 
@@ -248,6 +247,12 @@ def calculate_deaths(t, recovered_inmates_and_dead_inmates, delta_recovered_list
     R = recovered_inmates_and_dead_inmates - D
 
     return R, D
+
+
+def print_release_intervention_info(time, infected_list, release_number):
+    """Prints info when release intervention occurs."""
+    print(f'Release intervention condition met:\n\tTime: {time}\n\t# of infected: {len(infected_list)}')
+    print(f'\tReleasing {release_number} inmates.')
 
 
 def get_infected(data: EoN.Simulation_Investigation, end_time: int):
