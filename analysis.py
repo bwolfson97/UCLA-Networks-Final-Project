@@ -7,7 +7,7 @@ import numpy as np
 def summary(t, S, I, R, D, save_plot, title, parameters):
     """Plots graph of simulation and computes various statistics."""
     # Print parameters
-    print('############################## Parameters ##############################')
+    print('############################ Parameters #############################')
     print(parameters)
 
     # Print statistics
