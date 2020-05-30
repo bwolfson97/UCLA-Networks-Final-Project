@@ -3,8 +3,8 @@ import numpy as np
 
 
 def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, background_inmate_turnover,
-               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, soc_dist, soc_dist_tau,
-               constant_patient_zero, patient_zero_numbers):
+               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, social_distance,
+               social_distance_tau, constant_patient_zero, patient_zero_numbers):
     """Runs a simulation on SIR model.
 
     Args:
@@ -21,8 +21,8 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         death_rate: percent of recovered inmates that die
         percent_infected: percent of general population that is infected
         percent_recovered: percent of general population that is recovered
-        soc_dist: boolean flag, if we lower transmission rate after major release
-        soc_dist_tau: new transmission rate after major release
+        social_distance: boolean flag, if we lower transmission rate after major release
+        social_distance_tau: new transmission rate after major release
         constant_patient_zero: if True, then patient zero will be set to node patient_zero_number
         patient_zero_numbers: sets node number of patient zero (default is 0, this parameter is arbitrary)
 
@@ -65,8 +65,8 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
             if stop_inflow_at_intervention:
                 print('\tStopping inmate inflow.')
                 background_inmate_turnover = 0
-            if soc_dist:
-                tau = soc_dist_tau
+            if social_distance:
+                tau = social_distance_tau
         else:  # If not, use background release rate
             r_n = background_release_number
 

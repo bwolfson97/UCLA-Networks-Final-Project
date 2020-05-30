@@ -5,9 +5,9 @@ from simulation import simulation
 
 
 def end_to_end(release_number, number_infected_before_release, stop_inflow_at_intervention,
-               background_inmate_turnover=20, rho=0.0003, death_rate=0.012, tau=0.03, gamma=0.07, max_time=60,
+               background_inmate_turnover=20, death_rate=0.012, tau=0.03, gamma=0.07, rho=0.0003, max_time=60,
                N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015, save_plot=False, title='',
-               soc_dist=False, soc_dist_tau=0.001, custom_graph=None, constant_patient_zero=False,
+               social_distance=False, social_distance_tau=0.01, custom_graph=None, constant_patient_zero=False,
                patient_zero_numbers=0):
     """Runs end-to-end simulation and plots results.
 
@@ -15,10 +15,10 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
         background_inmate_turnover: background # of inmates added/released at each time step
         release_number: # of inmates to release
         number_infected_before_release: number of infected at which to perform release on next integer time
-        rho: percent of inmates that are initially infected
         death_rate: probability of dying after being infected
         tau: transmission rate
         gamma: recovery rate
+        rho: percent of inmates that are initially infected
         max_time: # of time steps to run simulation
         N: # of inmates initially
         p: probability of contact between inmate and other inmates
@@ -27,8 +27,8 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
         save_plot: should plot of results be saved to computer?
         stop_inflow_at_intervention: should we stop the background inflow of inmates at intervention time?
         title: title of plot
-        soc_dist: boolean flag, if we lower transmission rate after major release
-        soc_dist_tau: new transmission rate after major release
+        social_distance: boolean flag, if we lower transmission rate after major release
+        social_distance_tau: new transmission rate after major release
         custom_graph: If custom_graph passed, uses custom_graph. Otherwise, creates graph from N and p
         constant_patient_zero: if True, then patient zero will be set to node patient_zero_number
         patient_zero_numbers: sets node numbers of patients zero (default is 0, this parameter is arbitrary)
@@ -52,8 +52,8 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
     # Run simulation
     t, S, I, R, D = simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number,
                                background_inmate_turnover, stop_inflow_at_intervention, p, death_rate,
-                               percent_infected, percent_recovered, soc_dist, soc_dist_tau, constant_patient_zero,
-                               patient_zero_numbers)
+                               percent_infected, percent_recovered, social_distance, social_distance_tau,
+                               constant_patient_zero, patient_zero_numbers)
 
     # Print summary of results
     summary(t, S, I, R, D, save_plot, title, parameters_dict)
