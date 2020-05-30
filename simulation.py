@@ -3,7 +3,7 @@ import numpy as np
 
 
 def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, background_inmate_turnover,
-               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered):
+               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, soc_dist):
     """Runs a simulation on SIR model.
 
     Args:
@@ -59,6 +59,8 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
             if stop_inflow_at_intervention:
                 print('\tStopping inmate inflow.')
                 background_inmate_turnover = 0
+            if soc_dist:
+                tau = social_distance_transmission_tau
         else:  # If not, use background release rate
             r_n = background_release_number
 

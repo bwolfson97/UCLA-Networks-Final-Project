@@ -6,7 +6,8 @@ from simulation import simulation
 
 def end_to_end(release_number, number_infected_before_release, stop_inflow_at_intervention,
                background_inmate_turnover=20, rho=0.0003, death_rate=0.012, tau=0.03, gamma=0.07, max_time=60,
-               N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015, save_plot=False, title=''):
+               N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015, save_plot=False, title='',
+               soc_dist=False):
     """Runs end-to-end simulation and plots results.
 
     Args:
@@ -42,7 +43,7 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
     # Run simulation
     t, S, I, R, D = simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number,
                                background_inmate_turnover, stop_inflow_at_intervention, p, death_rate,
-                               percent_infected, percent_recovered)
+                               percent_infected, percent_recovered, soc_dist)
 
     # Print summary of results
     summary(t, S, I, R, D, save_plot, title, parameters_dict)
