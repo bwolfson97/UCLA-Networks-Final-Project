@@ -66,7 +66,10 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
             if stop_inflow_at_intervention:
                 print('\tStopping inmate inflow.')
                 background_inmate_turnover = 0
+
+            # If doing social distancing, update transmission rate (tau)
             if social_distance:
+                print('\tEnacting social distancing.')
                 tau = social_distance_tau
         else:  # If not, use background release rate
             r_n = background_release_number
