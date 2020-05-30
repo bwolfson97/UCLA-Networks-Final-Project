@@ -43,7 +43,7 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
     # Save parameters
     parameters_dict = locals()
 
-    # if no initial_infected_list is passed, default to inmate 0 being infected
+    # If no initial_infected_list is passed, default to inmate 0 being infected
     if initial_infected_list is None:
         initial_infected_list = [0]
 

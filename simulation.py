@@ -48,6 +48,7 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
 
     # Loop over time
     for i in range(max_time):
+        # Run 1 time unit of simulation
         data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list,
                             tmin=i, tmax=i + 1, return_full_data=True)
         data_list.append(data)
