@@ -3,8 +3,8 @@ import numpy as np
 
 
 def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, background_inmate_turnover,
-               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, soc_dist, soc_dist_tau,
-               constant_patient_zero, patient_zero_numbers):
+               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, social_distance,
+               social_distance_tau, constant_initial_infected, initial_infected_list):
     """Runs a simulation on SIR model.
 
     Args:
@@ -21,35 +21,35 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         death_rate: percent of recovered inmates that die
         percent_infected: percent of general population that is infected
         percent_recovered: percent of general population that is recovered
-        soc_dist: boolean flag, if we lower transmission rate after major release
-        soc_dist_tau: new transmission rate after major release
-        constant_patient_zero: if True, then patient zero will be set to node patient_zero_number
-        patient_zero_numbers: sets node number of patient zero (default is 0, this parameter is arbitrary)
+        social_distance: boolean flag, if we lower transmission rate after major release
+        social_distance_tau: new transmission rate after major release
+        constant_initial_infected: if True, then patient zero will be set to node patient_zero_number
+        initial_infected_list: sets node number of patient zero (default is 0, this parameter is arbitrary)
 
     Returns:
         t: array of times at which events occur
-        S: # of susceptible inmates at each time step
-        I: # of infected inmates at each time step
-        R: # of recovered inmates at each time step
+        S: # of susceptible inmates at each time
+        I: # of infected inmates at each time
+        R: # of recovered inmates at each time
         D: # of dead inmates at each time step
     """
     print('Starting simulation...')
     release_occurred = False
     background_release_number = background_inmate_turnover
     data_list = []
-    infected_list = []
     recovered_list = []
     delta_recovered_list = []
 
-    if constant_patient_zero:
-        infected_list.append(patient_zero_numbers)
-    else:
-        infected_list.append(np.random.sample(list(G.nodes), np.ceil(rho*len(G.nodes)), replace=False))
+    # Check we are using initial_infected_list
+    if constant_initial_infected:
+        infected_list = initial_infected_list
+    else:  # Choose random initial infections based on rho
+        infected_list = list(np.random.choice(list(G.nodes), int(np.ceil(rho * len(G.nodes))), replace=False))
 
     # Loop over time
     for i in range(max_time):
         data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list,
-                                tmin=i, tmax=i + 1, return_full_data=True)
+                            tmin=i, tmax=i + 1, return_full_data=True)
         data_list.append(data)
 
         # Update infected and recovered inmate lists
@@ -65,8 +65,8 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
             if stop_inflow_at_intervention:
                 print('\tStopping inmate inflow.')
                 background_inmate_turnover = 0
-            if soc_dist:
-                tau = soc_dist_tau
+            if social_distance:
+                tau = social_distance_tau
         else:  # If not, use background release rate
             r_n = background_release_number
 
