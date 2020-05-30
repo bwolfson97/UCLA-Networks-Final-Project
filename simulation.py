@@ -4,7 +4,7 @@ import numpy as np
 
 def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, background_inmate_turnover,
                stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, soc_dist, soc_dist_tau,
-               constant_patient_zero, patient_zero_number):
+               constant_patient_zero, patient_zero_numbers):
     """Runs a simulation on SIR model.
 
     Args:
@@ -24,7 +24,7 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         soc_dist: boolean flag, if we lower transmission rate after major release
         soc_dist_tau: new transmission rate after major release
         constant_patient_zero: if True, then patient zero will be set to node patient_zero_number
-        patient_zero_number: sets node number of patient zero (default is 0, this parameter is arbitrary)
+        patient_zero_numbers: sets node number of patient zero (default is 0, this parameter is arbitrary)
 
     Returns:
         t: array of times at which events occur
@@ -42,16 +42,13 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
     delta_recovered_list = []
 
     if constant_patient_zero:
-        infected_list.append(patient_zero_number)
+        infected_list.append(patient_zero_numbers)
+    else:
+        infected_list.append(np.random.sample(list(G.nodes), np.ceil(rho*len(G.nodes)), replace=False))
 
     # Loop over time
     for i in range(max_time):
-        # Use rho for first time step
-        if i == 0 and not constant_patient_zero: # if statement could be removed, but I'm not familiar enough
-            # with EoN to do it safely, I'll leave it to you
-            data = EoN.fast_SIR(G, tau, gamma, rho=rho, tmax=1, return_full_data=True)
-        else:
-            data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list,
+        data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list,
                                 tmin=i, tmax=i + 1, return_full_data=True)
         data_list.append(data)
 
