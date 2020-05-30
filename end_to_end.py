@@ -49,7 +49,7 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
 
     # Use custom_graph if passed
     if custom_graph is not None:
-        G = custom_graph
+        G = custom_graph.copy()
     else:  # Build new graph
         G = nx.fast_gnp_random_graph(N, p)
 
