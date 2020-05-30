@@ -3,7 +3,8 @@ import numpy as np
 
 
 def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, background_inmate_turnover,
-               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, soc_dist, soc_dist_tau):
+               stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, soc_dist, soc_dist_tau,
+               constant_patient_zero, patient_zero_number):
     """Runs a simulation on SIR model.
 
     Args:
@@ -22,6 +23,8 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         percent_recovered: percent of general population that is recovered
         soc_dist: boolean flag, if we lower transmission rate after major release
         soc_dist_tau: new transmission rate after major release
+        constant_patient_zero: if True, then patient zero will be set to node patient_zero_number
+        patient_zero_number: sets node number of patient zero (default is 0, this parameter is arbitrary)
 
     Returns:
         t: array of times at which events occur
@@ -38,10 +41,14 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
     recovered_list = []
     delta_recovered_list = []
 
+    if constant_patient_zero:
+        infected_list.append(patient_zero_number)
+
     # Loop over time
     for i in range(max_time):
         # Use rho for first time step
-        if i == 0:
+        if i == 0 and not constant_patient_zero: # if statement could be removed, but I'm not familiar enough
+            # with EoN to do it safely, I'll leave it to you
             data = EoN.fast_SIR(G, tau, gamma, rho=rho, tmax=1, return_full_data=True)
         else:
             data = EoN.fast_SIR(G, tau, gamma, initial_infecteds=infected_list, initial_recovereds=recovered_list,
