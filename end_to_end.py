@@ -35,9 +35,9 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
 
     Returns:
         t: array of times at which events occur
-        S: # of susceptible inmates at each time step
-        I: # of infected inmates at each time step
-        R: # of recovered inmates at each time step
+        S: # of susceptible inmates at each time
+        I: # of infected inmates at each time
+        R: # of recovered inmates at each time
         D: # of dead inmates at each time step
     """
     # Save parameters
