@@ -30,8 +30,8 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
         social_distance: boolean flag, if we lower transmission rate after major release
         social_distance_tau: new transmission rate after major release
         custom_graph: If custom_graph passed, uses custom_graph. Otherwise, creates graph from N and p
-        constant_initial_infected: if True, then patient zero will be set to node patient_zero_number
-        initial_infected_list: sets node numbers of patients zero (default is 0, this parameter is arbitrary)
+        constant_initial_infected: if True, then initial infected will be set to node initial_infected_list
+        initial_infected_list: sets node numbers of initial infected (default is 0, this parameter is arbitrary)
 
     Returns:
         t: array of times at which events occur

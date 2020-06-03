@@ -23,8 +23,8 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         percent_recovered: percent of general population that is recovered
         social_distance: boolean flag, if we lower transmission rate after major release
         social_distance_tau: new transmission rate after major release
-        constant_initial_infected: if True, then patient zero will be set to node patient_zero_number
-        initial_infected_list: sets node number of patient zero (default is 0, this parameter is arbitrary)
+        constant_initial_infected: if True, then initial infected will be set to node initial_infected_list
+        initial_infected_list: sets node numbers of initial infected (default is 0, this parameter is arbitrary)
 
     Returns:
         t: array of times at which events occur
@@ -85,6 +85,7 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
     return t, S, I, R, D
 
 
+# Helper Functions
 def enact_interventions(background_inmate_turnover, background_release_number, time, infected_list, release_number,
                         social_distance, social_distance_tau, stop_inflow_at_intervention, tau):
     """Enacts specified interventions."""
@@ -110,7 +111,6 @@ def enact_interventions(background_inmate_turnover, background_release_number, t
     return background_inmate_turnover, r_n, tau
 
 
-# Helper Functions
 def recalibrate_graph(G, infected_list, recovered_list, birth_number, release_number, p,
                       percent_infected, percent_recovered, death_rate):
     """Updates graph by adding new inmates and removing released inmates.
