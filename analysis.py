@@ -7,11 +7,11 @@ import numpy as np
 def summary(t, S, I, R, D, save_plot, title, parameters):
     """Plots graph of simulation and computes various statistics."""
     # Print parameters
-    print('############################ Parameters #############################')
+    print(f'{"#"*15} Parameters {"#"*15}')
     print(parameters)
 
     # Print statistics
-    print('\n############################## Results ##############################')
+    print(f'\n{"#"*15} Results {"#"*18}')
     print('Total # of infections: ', count_total_infected(I))
     print('Total # of deaths: ', count_total_deaths(D))
 
