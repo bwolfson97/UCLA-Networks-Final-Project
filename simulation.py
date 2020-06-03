@@ -58,19 +58,14 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
 
         # Check if release condition has been met
         if not release_occurred and len(infected_list) >= number_infected_before_release:
-            print_release_intervention_info(i + 1, infected_list, release_number)
-            r_n = background_release_number + release_number
+            background_inmate_turnover, r_n, tau = enact_interventions(background_inmate_turnover,
+                                                                       background_release_number, i + 1,
+                                                                       infected_list, release_number,
+                                                                       social_distance,
+                                                                       social_distance_tau,
+                                                                       stop_inflow_at_intervention,
+                                                                       tau)
             release_occurred = True
-
-            # If we are stopping background inmate turnover at release intervention time
-            if stop_inflow_at_intervention:
-                print('\tStopping inmate inflow.')
-                background_inmate_turnover = 0
-
-            # If doing social distancing, update transmission rate (tau)
-            if social_distance:
-                print('\tEnacting social distancing.')
-                tau = social_distance_tau
         else:  # If not, use background release rate
             r_n = background_release_number
 
@@ -88,6 +83,31 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
 
     print('Simulation completed.\n')
     return t, S, I, R, D
+
+
+def enact_interventions(background_inmate_turnover, background_release_number, time, infected_list, release_number,
+                        social_distance, social_distance_tau, stop_inflow_at_intervention, tau):
+    """Enacts specified interventions."""
+    # Print intervention info
+    print(f'Release intervention condition met:\n\tTime: {time}\n\t# of infected: {len(infected_list)}')
+
+    # Release intervention
+    r_n = background_release_number
+    if release_number:
+        print(f'\tReleasing {release_number} inmates.')
+        r_n += release_number
+
+    # Stopping-inmate-inflow intervention
+    if stop_inflow_at_intervention:
+        print('\tStopping inmate inflow.')
+        background_inmate_turnover = 0
+
+    # Social distancing intervention
+    if social_distance:
+        print('\tEnacting social distancing.')
+        tau = social_distance_tau
+
+    return background_inmate_turnover, r_n, tau
 
 
 # Helper Functions
@@ -259,12 +279,6 @@ def calculate_deaths(t, recovered_inmates_and_dead_inmates, delta_recovered_list
     R = recovered_inmates_and_dead_inmates - D
 
     return R, D
-
-
-def print_release_intervention_info(time, infected_list, release_number):
-    """Prints info when release intervention occurs."""
-    print(f'Release intervention condition met:\n\tTime: {time}\n\t# of infected: {len(infected_list)}')
-    print(f'\tReleasing {release_number} inmates.')
 
 
 def get_infected(data: EoN.Simulation_Investigation, end_time: int):
