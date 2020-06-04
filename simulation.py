@@ -4,7 +4,7 @@ import numpy as np
 
 def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number, background_inmate_turnover,
                stop_inflow_at_intervention, p, death_rate, percent_infected, percent_recovered, social_distance,
-               social_distance_tau, constant_initial_infected, initial_infected_list):
+               social_distance_tau, initial_infected_list):
     """Runs a simulation on SIR model.
 
     Args:
@@ -23,7 +23,6 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
         percent_recovered: percent of general population that is recovered
         social_distance: boolean flag, if we lower transmission rate after major release
         social_distance_tau: new transmission rate after major release
-        constant_initial_infected: if True, then initial infected will be set to node initial_infected_list
         initial_infected_list: sets node numbers of initial infected (default is 0, this parameter is arbitrary)
 
     Returns:
@@ -41,9 +40,11 @@ def simulation(G, tau, gamma, rho, max_time, number_infected_before_release, rel
     delta_recovered_list = []
 
     # Check we are using initial_infected_list
-    if constant_initial_infected:
-        infected_list = initial_infected_list
+    if initial_infected_list is not None:
+        print('Using initial infected list to set initial infected.')
+        infected_list = initial_infected_list.copy()
     else:  # Choose random initial infections based on rho
+        print('Using rho to set initial infected.')
         infected_list = list(np.random.choice(list(G.nodes), int(np.ceil(rho * len(G.nodes))), replace=False))
 
     # Loop over time

@@ -7,8 +7,7 @@ from simulation import simulation
 def end_to_end(release_number, number_infected_before_release, stop_inflow_at_intervention,
                background_inmate_turnover=20, death_rate=0.012, tau=0.03, gamma=0.07, rho=0.0003, max_time=60,
                N=3000, p=0.02, percent_infected=0.0035, percent_recovered=0.0015, save_plot=False, title='',
-               social_distance=False, social_distance_tau=0.01, custom_graph=None, constant_initial_infected=False,
-               initial_infected_list=None):
+               social_distance=False, social_distance_tau=0.01, custom_graph=None, initial_infected_list=None):
     """Runs end-to-end simulation and plots results.
 
     Args:
@@ -30,8 +29,7 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
         social_distance: boolean flag, if we lower transmission rate after major release
         social_distance_tau: new transmission rate after major release
         custom_graph: If custom_graph passed, uses custom_graph. Otherwise, creates graph from N and p
-        constant_initial_infected: if True, then initial infected will be set to node initial_infected_list
-        initial_infected_list: sets node numbers of initial infected (default is 0, this parameter is arbitrary)
+        initial_infected_list: sets node numbers of initial infected. If not passed, rho is used
 
     Returns:
         t: array of times at which events occur
@@ -43,10 +41,6 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
     # Save parameters
     parameters_dict = locals()
 
-    # If no initial_infected_list is passed, default to inmate 0 being infected
-    if initial_infected_list is None:
-        initial_infected_list = [0]
-
     # Use custom_graph if passed
     if custom_graph is not None:
         G = custom_graph.copy()
@@ -57,7 +51,7 @@ def end_to_end(release_number, number_infected_before_release, stop_inflow_at_in
     t, S, I, R, D = simulation(G, tau, gamma, rho, max_time, number_infected_before_release, release_number,
                                background_inmate_turnover, stop_inflow_at_intervention, p, death_rate,
                                percent_infected, percent_recovered, social_distance, social_distance_tau,
-                               constant_initial_infected, initial_infected_list)
+                               initial_infected_list)
 
     # Print summary of results
     summary(t, S, I, R, D, save_plot, title, parameters_dict)
