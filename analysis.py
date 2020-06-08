@@ -75,30 +75,12 @@ def plot(t, S, I, R, D, save_plot, title, parameters):
         # Place plots in folder 'plots'
         if not os.path.exists('plots'):
             os.makedirs('plots')
-        filename = f'simulation_plot{parameters_into_string(parameters)}'
+        filename = f'{title}'.replace(" ", "_").replace(":", "_")
         plt.savefig(f'plots/{filename}.png')
-        print(f'Plot saved with filename: {filename}')
+        print(f'Plot saved with filename: {filename}.png')
 
 
 # Helper functions
-def parameters_into_string(parameters):
-    """Turns parameter dictionary into string for use in naming plot file."""
-    parameter_string = str()
-    for parameter, value in parameters.items():
-        # Logic to shorten parameter names because ran into too long filename problems
-        if parameter == 'save_plot':  # redundant to include
-            continue
-        if parameter == 'number_infected_before_release':
-            parameter = 'num_inf_bf_release'
-        elif parameter == 'background_inmate_turnover':
-            parameter = 'bck_turnover'
-        elif parameter == 'stop_inflow_at_intervention':
-            parameter = 'stp_in_at_int'
-
-        parameter_string += f'_{parameter}-{value}_'
-    return parameter_string
-
-
 def set_plot_display_settings(plot_width, plot_height, font_size):
     plt.rcParams.update({"figure.figsize": (plot_width, plot_height)})
     plt.rcParams.update({'font.size': font_size})
