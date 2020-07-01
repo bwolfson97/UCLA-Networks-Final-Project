@@ -1,6 +1,6 @@
 # UCLA-Networks-Final-Project
 
-UCLA Networks Final Project is the code for our final project for the UCLA Math 168 Networks class.
+UCLA Networks Final Project is the code for our final project for the UCLA Math 168 Networks class. Read our final report [here](modeling_covid.pdf). Note, the final report was written in the style of the journal PNAS, but it was not actually submitted to PNAS.
 
 ## Installation
 
