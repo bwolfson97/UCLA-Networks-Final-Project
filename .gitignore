@@ -1,0 +1,11 @@
+# Ignore saved plots
+plots
+
+# Ignore jupyter notebook checkpoints
+.ipynb_checkpoints
+
+.idea
+
+__pycache__
+
+Parameter\ Experiment\ Notebooks/.ipynb_checkpoints
